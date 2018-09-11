@@ -1,11 +1,15 @@
-from flask import Flask, render_template, send_file
+from flask import Flask, render_template, send_file, url_for
 import mysql.connector
 import openpyxl
 from openpyxl import Workbook, load_workbook
 from openpyxl.worksheet.dimensions import ColumnDimension
-from config import Config
+from flask_bootstrap import Bootstrap
 import random
 
+app = Flask(__name__)
+bootstrap = Bootstrap(app)
+
+#identifying column locations for each selection
 ID_COL = 26
 FIRST_NAME_COL = 23
 LAST_NAME_COL = 28
@@ -17,14 +21,11 @@ PHONE_COL = 34
 EMAIL_COL = 16
 
 
-
-app = Flask(__name__)
-app.config.from_object(Config)
-
+#database connection
 cnx = mysql.connector.connect(user='cclsJob', password='456CCLSjob', database='long_job_application', host='localhost')
 curA = cnx.cursor(dictionary=True)
 curB = cnx.cursor()
-query = 'SELECT firstname, lastname, address, city, state, zip, phone, email FROM job_application WHERE exported = 0;'
+query = "SELECT firstname, lastname, address, city, state, zip, phone, email FROM job_application WHERE exported = 0;"
 
 
 @app.route('/') 
@@ -119,4 +120,5 @@ def exported():
 
 
 
-
+if __name__ == '__main__':
+    app.run()
