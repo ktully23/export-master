@@ -1,3 +1,5 @@
+# Author: Kari Tully, 2018
+
 from flask import Flask, render_template, send_file, url_for
 import mysql.connector
 import openpyxl
@@ -56,10 +58,12 @@ def download_excel():
     #set new file name for output
     file_name = 'applicant-data.xlsx'
 
+    #get first letter of first name and first letter of last name to create each applicants' initials
     get_id = 'SELECT concat(left(firstname, 1), left(lastname, 1)) AppId from job_application;'
     curB.execute(get_id)
     id = curB.fetchall()
 
+    #take the initials that were created, add a random number, and put in the correct column in excel
     counter = 2
     for i in id:
         ws.cell(row=counter, column=ID_COL, value = i[0] + str(random.randint(1,1000)))
@@ -71,11 +75,12 @@ def download_excel():
         curB.execute(query)
         result = curB.fetchall()
         num_exported = len(result)
-        
+
+    #there is an error with the database, stop the application and inform the user  
     except mysql.connector.Error as err:
         return 'error {}'.format(err)
     else:
-    
+        #there are rows to export, so the application can continue 
         if num_exported > 0:
             counter = 2
             
